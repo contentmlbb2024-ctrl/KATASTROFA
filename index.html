@@ -8,6 +8,173 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
 
+  /* =================================
+   DECORATION ADD-ON
+================================= */
+
+/* Scroll progress bar */
+#scrollProgress {
+  position:fixed;
+  top:0;
+  left:0;
+  width:0%;
+  height:4px;
+  background:linear-gradient(90deg,#791321,#d5a64f,#fff0bd);
+  z-index:9999;
+  box-shadow:0 0 12px #d5a64f;
+}
+
+/* Cursor glow */
+.cursor-glow {
+  position:fixed;
+  width:180px;
+  height:180px;
+  border-radius:50%;
+  background:radial-gradient(circle,#d5a64f20,transparent 70%);
+  pointer-events:none;
+  transform:translate(-50%,-50%);
+  z-index:5;
+}
+
+/* Floating decorations */
+.floating-suit {
+  position:fixed;
+  color:#d5a64f;
+  opacity:.12;
+  font-size:35px;
+  pointer-events:none;
+  z-index:1;
+  animation:floatSuit 8s ease-in-out infinite;
+}
+
+@keyframes floatSuit {
+  0%,100% {transform:translateY(0) rotate(0deg)}
+  50% {transform:translateY(-35px) rotate(20deg)}
+}
+
+/* Gold particles */
+.gold-particle {
+  position:fixed;
+  width:4px;
+  height:4px;
+  background:#e8c477;
+  border-radius:50%;
+  pointer-events:none;
+  z-index:2;
+  box-shadow:0 0 12px #d5a64f;
+  animation:particleFloat 7s linear infinite;
+}
+
+@keyframes particleFloat {
+  0% {transform:translateY(100vh);opacity:0}
+  20% {opacity:.8}
+  80% {opacity:.6}
+  100% {transform:translateY(-10vh);opacity:0}
+}
+
+/* Decorative section lines */
+.section-title::after {
+  content:"♠ ━━━━━ ♦ ━━━━━ ♣";
+  display:block;
+  color:#d5a64f;
+  font-size:17px;
+  letter-spacing:5px;
+  margin-top:20px;
+  opacity:.8;
+}
+
+/* Card shine */
+.ticket-card,
+.detail-card,
+.member {
+  position:relative;
+  overflow:hidden;
+}
+
+.ticket-card::before,
+.detail-card::before,
+.member::before {
+  content:"";
+  position:absolute;
+  top:0;
+  left:-120%;
+  width:60%;
+  height:100%;
+  background:linear-gradient(
+    110deg,
+    transparent,
+    #ffffff12,
+    transparent
+  );
+  transform:skewX(-20deg);
+  transition:.7s;
+  pointer-events:none;
+}
+
+.ticket-card:hover::before,
+.detail-card:hover::before,
+.member:hover::before {
+  left:150%;
+}
+
+/* Hero decoration */
+.hero::after {
+  content:"♠        ♦        ♣        ♥";
+  position:absolute;
+  bottom:35px;
+  left:0;
+  width:100%;
+  text-align:center;
+  color:#d5a64f;
+  opacity:.35;
+  letter-spacing:18px;
+  font-size:20px;
+  pointer-events:none;
+}
+
+/* Back to top */
+#backToTop {
+  position:fixed;
+  right:25px;
+  bottom:25px;
+  width:45px;
+  height:45px;
+  border:1px solid #d5a64f;
+  background:#791321;
+  color:#f5e5c8;
+  font-size:22px;
+  z-index:999;
+  opacity:0;
+  visibility:hidden;
+  transition:.3s;
+}
+
+#backToTop.show {
+  opacity:1;
+  visibility:visible;
+}
+
+#backToTop:hover {
+  background:#d5a64f;
+  color:#100609;
+  transform:translateY(-5px);
+}
+
+/* Responsive */
+@media(max-width:550px) {
+  .cursor-glow {
+    display:none;
+  }
+
+  .floating-suit {
+    font-size:23px;
+  }
+
+  #backToTop {
+    right:15px;
+    bottom:15px;
+  }
+}
 <style>
 :root {
   --red:#791321;
@@ -21,6 +188,14 @@
 html {scroll-behavior:smooth}
 
 body {
+ <!-- DECORATIVE ELEMENTS -->
+<div id="scrollProgress"></div>
+
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<button id="backToTop" aria-label="Back to top">
+  ↑
+</button>
   background:var(--dark);
   color:var(--cream);
   font-family:'Playfair Display',serif;
@@ -1644,6 +1819,78 @@ setInterval(checkTicketStock,30000);
 renderTeam();
 revealElements();
 
+  /* =================================
+   DECORATION JAVASCRIPT
+================================= */
+
+// Cursor glow
+const cursorGlow = document.getElementById('cursorGlow');
+
+document.addEventListener('mousemove', function(e) {
+  if (cursorGlow) {
+    cursorGlow.style.left = e.clientX + 'px';
+    cursorGlow.style.top = e.clientY + 'px';
+  }
+});
+
+// Scroll progress and back to top
+const progressBar = document.getElementById('scrollProgress');
+const backToTop = document.getElementById('backToTop');
+
+window.addEventListener('scroll', function() {
+  const scrollTop = window.scrollY;
+  const height =
+    document.documentElement.scrollHeight - window.innerHeight;
+
+  const progress = height > 0
+    ? (scrollTop / height) * 100
+    : 0;
+
+  progressBar.style.width = progress + '%';
+
+  if (scrollTop > 400) {
+    backToTop.classList.add('show');
+  } else {
+    backToTop.classList.remove('show');
+  }
+});
+
+backToTop.addEventListener('click', function() {
+  window.scrollTo({
+    top:0,
+    behavior:'smooth'
+  });
+});
+
+// Floating card symbols
+const suits = ['♠','♥','♣','♦'];
+
+for (let i = 0; i < 12; i++) {
+  const suit = document.createElement('div');
+
+  suit.className = 'floating-suit';
+  suit.textContent = suits[i % suits.length];
+
+  suit.style.left = Math.random() * 100 + 'vw';
+  suit.style.top = Math.random() * 100 + 'vh';
+  suit.style.animationDelay = Math.random() * 5 + 's';
+
+  document.body.appendChild(suit);
+}
+
+// Golden particles
+for (let i = 0; i < 25; i++) {
+  const particle = document.createElement('div');
+
+  particle.className = 'gold-particle';
+
+  particle.style.left = Math.random() * 100 + 'vw';
+  particle.style.animationDelay = Math.random() * 7 + 's';
+  particle.style.animationDuration =
+    (5 + Math.random() * 7) + 's';
+
+  document.body.appendChild(particle);
+}
 </script>
 
 </body>
