@@ -1910,6 +1910,28 @@ footer a:hover {color:var(--gold)}
   height: 38px;
   object-fit: contain;
 }
+
+  .music-toggle {
+  position: fixed;
+  top: 25px;
+  right: 25px;
+  z-index: 99999;
+  background: rgba(15, 12, 10, 0.9);
+  color: #d6b66b;
+  border: 1px solid #a88b4a;
+  padding: 11px 18px;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.music-toggle:hover {
+  background: #a88b4a;
+  color: #100d0a;
+  box-shadow: 0 0 15px rgba(214,182,107,0.4);
+}
   
 </style>
 </head>
@@ -3637,7 +3659,52 @@ setInterval(checkTicketStock, 30000);
 renderTeam();
 revealElements();
 
+  const bgMusic = document.getElementById("bgMusic");
+
+bgMusic.volume = 0.4;
+
+let musicStarted = false;
+
+function startBackgroundMusic() {
+  if (!musicStarted) {
+    bgMusic.play()
+      .then(() => {
+        musicStarted = true;
+      })
+      .catch(error => {
+        console.log("Musik menunggu interaksi:", error);
+      });
+  }
+}
+  const bgMusic = document.getElementById("bgMusic");
+const musicToggle = document.getElementById("musicToggle");
+
+bgMusic.volume = 0.4;
+
+musicToggle.addEventListener("click", async () => {
+  if (bgMusic.paused) {
+    try {
+      await bgMusic.play();
+      musicToggle.textContent = "♫ MUSIC: ON";
+    } catch (error) {
+      console.log("Musik gagal diputar:", error);
+    }
+  } else {
+    bgMusic.pause();
+    musicToggle.textContent = "♫ MUSIC: OFF";
+  }
+});
+  
 </script>
 
 </body>
+
+<audio id="bgMusic" loop preload="auto">
+  <source src="horror.mp3" type="audio/mpeg">
+</audio>
+
+  <button id="musicToggle" class="music-toggle">
+  ♫ MUSIC: OFF
+</button>
+    
 </html>
