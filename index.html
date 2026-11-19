@@ -3695,16 +3695,39 @@ musicToggle.addEventListener("click", async () => {
   }
 });
   
-</script>
-
-</body>
-
+<!-- AUDIO MUSIK -->
 <audio id="bgMusic" loop preload="auto">
   <source src="horror.mp3" type="audio/mpeg">
 </audio>
 
-  <button id="musicToggle" class="music-toggle">
+<!-- TOMBOL MUSIC ON/OFF -->
+<button id="musicToggle" class="music-toggle">
   ♫ MUSIC: OFF
 </button>
-    
+
+<!-- JAVASCRIPT WEBSITE -->
+<script>
+  // Semua JavaScript website kamu tetap di sini.
+
+  const bgMusic = document.getElementById("bgMusic");
+  const musicToggle = document.getElementById("musicToggle");
+
+  bgMusic.volume = 0.4;
+
+  musicToggle.addEventListener("click", async () => {
+    if (bgMusic.paused) {
+      try {
+        await bgMusic.play();
+        musicToggle.textContent = "♫ MUSIC: ON";
+      } catch (error) {
+        console.log("Musik gagal diputar:", error);
+      }
+    } else {
+      bgMusic.pause();
+      musicToggle.textContent = "♫ MUSIC: OFF";
+    }
+  });
+</script>
+
+</body>
 </html>
